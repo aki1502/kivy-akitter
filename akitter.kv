@@ -1,0 +1,165 @@
+#:kivy 1.11.1
+
+
+AkitterRoot:
+    
+
+<Akeet@BoxLayout>:
+    color: 0.941, 0.973, 1, 1 #aliceblue
+    icon: "./images/anonymous.png"
+    author: "aki1502"
+    text: "こんにちは、世界！"
+    date: "1998/02/21 20:00"
+
+    orientation: "horizontal"
+
+    canvas.before:
+        Color:
+            rgba: 0.439, 0.502, 0.565, 1 #slategray
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    Image:
+        source: root.icon
+        size_hint_x: None
+        width: self.height+20
+
+    BoxLayout:
+        orientation: "vertical"
+
+        BoxLayout:
+            orientation: "horizontal"
+
+            Label:
+                markup: True
+                text: "[color=EF810F][ref=athr]"+root.author+"[/ref][/color]"
+                on_ref_press: app.root.author_name(root.author)
+                text_size: self.size
+                halign: "left"
+
+            Label:
+                text: root.date
+                text_size: self.size
+                halign: "right"
+                padding: 10, 0
+
+        Label:
+            text: root.text
+            text_size: self.size
+            halign: "left"
+
+<CompositionLabel>:
+    size_hint_x: None
+    size_hint_y: None
+    width: self.font_size * (len(self.text)-7)
+    height: self.font_size
+    color: 0,0,0,1
+    markup: True
+
+<AkitterRoot>:
+    canvas.before:
+        Color:
+            rgba: 0.467, 0.533, 0.600, 1 # lightslategray
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        size: root.size
+
+        ActionBar:
+            id: actionbar
+
+            ActionView:
+                use_separator: True
+                font_size: 30
+
+                ActionPrevious:
+                    title: "Akitter"
+                    color: 0.937, 0.506, 0.059, 1 #orange
+                    app_icon: "./images/Akitter.png"
+
+                ActionButton:
+                    text: "Sign in"
+                    color: 0.937, 0.506, 0.059, 1 #orange
+
+                ActionButton:
+                    text: "Sign up"
+                    color: 0.937, 0.506, 0.059, 1 #orange
+
+        Carousel:
+            id: carousel
+            AkeetForm:
+                id: akeetform
+
+            LoginForm:
+                id: loginform
+
+
+<AkeetForm>:
+    textinput_font_size: 20
+    textinput_height: 35
+    sendbutton_width: 70
+    orientation: "vertical"
+
+    AkeetColumn:
+        viewclass: "Akeet"
+
+        size_hint_y: None
+        height: root.height-root.textinput_height
+        pos: (0, root.textinput_height)
+        padding: 0, 2, 0, 0
+
+        RecycleBoxLayout:
+            default_size: None, 50
+            default_size_hint: 1, None
+            size_hint_y: None
+            height: self.minimum_height
+            orientation: 'vertical'
+
+
+    BoxLayout:
+        orientation: "horizontal"
+        size_hint_y: None
+        height: root.textinput_height
+
+        FloatLayout:
+            size_hint_x: None
+            width: root.width-root.sendbutton_width
+
+            TextInputIME:
+                id: textinput
+                font_size: root.textinput_font_size
+                composition_window: cmp_window
+                text: root.ipt
+                multiline: True
+                on_touch_up: self.select_all()
+                cursor_blink: True
+                cursor_color: 0.937, 0.506, 0.059, 0.8 # orange
+                selection_color: 0.937, 0.506, 0.059, 0.221 # orange
+                pos: (2, 0)
+
+            CompositionLabel:
+                id: cmp_window
+                font_size: root.textinput_font_size
+                textinput: textinput
+                x: textinput.cursor_pos[0]
+                y: textinput.cursor_pos[1] - self.height
+
+        Button:
+            id: sendbutton
+            font_size: root.textinput_font_size
+            text: "[send]"
+            color: 0.937, 0.506, 0.059, 1 #orange
+            size_hint_x: None
+            width: root.sendbutton_width
+            on_release: root.send()
+
+    FloatLayout:
+        Label:
+            text: "invalid text"
+
+
+<LoginForm@BoxLayout>:
