@@ -186,3 +186,16 @@ class TextInputIME(TextInput):
 
 class CompositionLabel(Label):
     textinput = ObjectProperty()
+
+
+
+kv = r"""
+<CompositionLabel>:
+    size_hint_x: None
+    size_hint_y: None
+    width: self.font_size * (len(self.text)-7)
+    height: self.font_size
+    color: 0,0,0,1
+    markup: True
+"""
+Builder.load_string(kv)
