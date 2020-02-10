@@ -6,12 +6,21 @@ from signform import SigninForm, SignupForm
 from userscreen import UserScreen
 
 
+
 class SManager(ScreenManager):
     """
     SManager: 画面遷移を管理するWidget。
     """
     def __init__(self, **kwargs):
         super(SManager, self).__init__(**kwargs)
+        from modules.loginfo import loginfo
+        if loginfo["username"]:
+            self.gtl(direction="left")
+        else:
+            self.unsigned()
+
+    def unsigned(self):
+        self.clear_widgets()
         screens = [
             ["menuscreen", MenuScreen],
             ["signinform", SigninForm],
@@ -20,9 +29,11 @@ class SManager(ScreenManager):
         for name, klass in screens:
             screen = klass(name=name)
             self.add_widget(screen)
+        self.transition.direction = "right"
+        self.current = "menuscreen"
 
     def gtl(self, direction="right"):
-        if self.current_screen.name == "gtl":
+        if getattr(self.current_screen, "name", "") == "gtl":
             return None
         self.clear_widgets()
         self.add_widget(AkeetForm(name="gtl"))
@@ -30,13 +41,15 @@ class SManager(ScreenManager):
         self.current = "gtl"
 
     def user(self, name=None):
-        name = name or self.parent.name
+        from modules.loginfo import loginfo
+        name = name or loginfo["username"]
         if self.current_screen.name == name:
             return None
         self.clear_widgets()
         self.add_widget(UserScreen(name=name))
         self.transition.direction = "left"
         self.current = name
+
 
 class MenuScreen(Screen):
     pass

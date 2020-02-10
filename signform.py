@@ -18,7 +18,7 @@ class SignAbstract(ErrorPopper):
         sm = self.manager
         sm.gtl(direction="left")
         lv = self.manager.parent.ids["laview"]
-        lv.sign()
+        lv.signed()
         
     def validation(self, *args):
         raise NotImplementedError

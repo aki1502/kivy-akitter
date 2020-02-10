@@ -29,8 +29,6 @@ kv = r"""
 AkitterRoot:
 
 <AkitterRoot>:
-    name: ""
-
     orientation: "vertical"
     canvas.before:
         Color:
@@ -46,9 +44,6 @@ AkitterRoot:
 
     SManager:
         id: smanager
-
-        AkeetForm:
-            id: akeetform
 """
 
 Builder.load_string(kv)

@@ -9,12 +9,23 @@ class LaView(ActionView):
     LaView: ActionBar直下に置くWidget。
     """
     def __init__(self, **kwargs):
+        from modules.loginfo import loginfo
         super(LaView, self).__init__(**kwargs)
         self.add_widget(LaPrevious(fname="menu"))
+        if loginfo["username"]:
+            self.signed()
+        else:
+            self.unsigned()
+
+    def unsigned(self):
+        for la in self.children.copy():
+            if isinstance(la, LaButton):
+                self.remove_widget(la)
+        self.action_previous.funcname = "menu"
         self.add_widget(LaButton(text="Sign in"))
         self.add_widget(LaButton(text="Sign up"))
 
-    def sign(self):
+    def signed(self):
         for la in self.children.copy():
             if isinstance(la, LaButton):
                 self.remove_widget(la)
@@ -50,10 +61,7 @@ class LaButton(ActionButton):
     def __init__(self, **kwargs):
         super(LaButton, self).__init__(**kwargs)
         funcname = kwargs["text"].replace(" ", "_")
-        self.func = getattr(self, funcname)
-
-    def on_release(self):
-        self.func()
+        self.on_release = getattr(self, funcname)
 
     def Sign_in(self):
         sm = App.get_running_app().root.ids["smanager"]

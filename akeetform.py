@@ -46,10 +46,6 @@ class AkeetForm(ErrorPopper):
             return "予め入っている文は投稿できません。"
         return ""
 
-    def user_detail(self, name):
-        """user_detail: ユーザー詳細画面に遷移する。"""
-        self.manager.user(name)
-
 
 class AkeetColumn(RecycleView):
     """
@@ -169,7 +165,7 @@ akeetkv = r"""
                 Label:
                     markup: True
                     text: "[ref=author]"+root.author+"[/ref]"
-                    on_ref_press: app.root.ids.akeetform.user_detail(root.author)
+                    on_ref_press: app.root.ids.smanager.user(name=root.author)
                     color: 0.937, 0.506, 0.059, 1 #orange
                     font_size: root.font_size
                     text_size: self.size
@@ -195,3 +191,9 @@ akeetkv = r"""
 
 Builder.load_string(formkv)
 Builder.load_string(akeetkv)
+
+
+
+if __name__ == "__main__":
+    from kivy.base import runTouchApp
+    runTouchApp(Builder.load_string(r"AkeetForm:"))

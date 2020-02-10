@@ -27,7 +27,6 @@ class Akeet(NamedTuple):
         author = str(response["author"])
         text = response["text"]
         published_date = datetime.fromisoformat(response["published_date"])
-        print(published_date)
         return Akeet(
             author=author,
             text=text,
