@@ -1,6 +1,7 @@
 from kivy.lang.builder import Builder
 from kivy.properties import StringProperty
 from kivy.uix.recycleview import RecycleView
+import requests
 
 import modules.multi_language_textinput
 
@@ -56,8 +57,13 @@ class AkeetColumn(RecycleView):
     """
     def __init__(self, **kwargs):
         super(AkeetColumn, self).__init__(**kwargs)
-        self.data = [Akeet().row() for i in range(100)]
+        self.data = self.get_akeets()
 
+    def get_akeets(self):
+        url = "https://www.aki1502.tk/akitter/api/akeets/"
+        response = requests.get(url)
+        data = reversed(response.json())
+        return [Akeet.from_response(r).row() for r in data]
 
 
 formkv = r"""
@@ -126,7 +132,7 @@ akeetkv = r"""
     icon: "./images/anonymous.png"
     author: "aki1502"
     text: "こんにちは、世界！"
-    date: "1998/02/21 20:00"
+    published_date: "1998/02/21 20:00"
     font_size: self.width/sp(37) if self.width > 14*sp(37) else self.width/sp(24)
 
     orientation: "vertical"
@@ -171,7 +177,7 @@ akeetkv = r"""
                     valign: "center"
 
                 Label:
-                    text: root.date
+                    text: root.published_date
                     color: 0.8, 0.8, 0.9, 1
                     font_size: root.font_size
                     text_size: self.size

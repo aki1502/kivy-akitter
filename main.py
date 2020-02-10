@@ -2,8 +2,6 @@ from kivy.app import App
 from kivy.lang.builder import Builder
 from kivy.uix.boxlayout import BoxLayout
 
-import japanize_kivy
-
 import labar
 import smanager
 
