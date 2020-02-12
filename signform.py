@@ -11,9 +11,10 @@ from variables import url
 
 class SignAbstract(ErrorPopper):
     """
-    SignEP: SigninForm, SignupFormの親クラス。
+    SigninForm, SignupFormの親クラス。
     """
     def sign(self, **kwargs):
+        """sign in/upを試みる。"""
         err = self.validation(**kwargs)
         if err:
             self.poperror(err)
@@ -32,6 +33,7 @@ class SigninForm(SignAbstract):
     SigninForm: サインイン画面のWidget。
     """
     def validation(self, **kwargs):
+        """サインインを試みて、空文字列かエラーメッセージを送出する。"""
         r = requests.post(url.SIGNIN, json=kwargs)
         if r.status_code == 200:
             setloginfo(username=kwargs["username"], **r.json())
@@ -44,6 +46,7 @@ class SignupForm(SignAbstract):
     SignupForm: サインアップ画面のWidget。
     """
     def validation(self, **kwargs):
+        """サインアップを試みて、空文字列かエラーメッセージを送出する。"""
         r = requests.post(url.SIGNUP, json=kwargs)
         if r.status_code != 201:
             if r.headers["Content-Type"] == "application/json":

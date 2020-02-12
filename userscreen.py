@@ -5,7 +5,7 @@ from kivy.uix.screenmanager import Screen
 
 class UserScreen(Screen):
     """
-    UserScreen: ユーザー詳細画面のWidget。
+    ユーザー詳細画面のWidget。
     """
     def __init__(self, **kwargs):
         super(UserScreen, self).__init__(**kwargs)

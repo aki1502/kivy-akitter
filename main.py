@@ -9,7 +9,7 @@ from variables import config
 
 class AkitterApp(App):
     """
-    AkitterApp: Akitterのmain app。
+    Akitterのmain app。
     """
     def build(self):
         return AkitterRoot()
@@ -17,7 +17,7 @@ class AkitterApp(App):
 
 class AkitterRoot(BoxLayout):
     """
-    AkitterRoot: Akitterのroot widget。
+    Akitterのroot widget。
     """
     pass
 

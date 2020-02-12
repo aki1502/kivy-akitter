@@ -10,7 +10,7 @@ from variables import config
 
 class SManager(ScreenManager):
     """
-    SManager: 画面遷移を管理するWidget。
+    画面遷移を管理するWidget。
     """
     def __init__(self, **kwargs):
         super(SManager, self).__init__(**kwargs)
@@ -20,6 +20,7 @@ class SManager(ScreenManager):
             self.unsigned()
 
     def unsigned(self):
+        """サインイン情報がない場合のScreensを構築。"""
         self.clear_widgets()
         screens = [
             ["menuscreen", MenuScreen],
@@ -33,6 +34,7 @@ class SManager(ScreenManager):
         self.current = "menuscreen"
 
     def gtl(self, direction="right"):
+        """global timelineのScreenを構築。"""
         if getattr(self.current_screen, "name", "") == "gtl":
             return None
         self.clear_widgets()
@@ -41,6 +43,7 @@ class SManager(ScreenManager):
         self.current = "gtl"
 
     def user(self, name=None):
+        """ユーザー画面のScreenを構築。"""
         name = name or getloginfo()["username"]
         if self.current_screen.name == name:
             return None

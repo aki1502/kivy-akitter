@@ -19,7 +19,7 @@ initial_string = "You can use only 31 characters."
 
 class AkeetForm(ErrorPopper):
     """
-    AkeetForm: TL+Akeet投稿画面のWidget。
+    TL+Akeet投稿画面のWidget。
     """
     ipt = StringProperty()
 
@@ -28,7 +28,7 @@ class AkeetForm(ErrorPopper):
         self.ipt = initial_string
 
     def send(self):
-        """send: Akeetを投稿する。"""
+        """Akeetを投稿する。"""
         self.ipt = self.ids["textinput"].text
         if self.ipt == "":
             return None
@@ -49,7 +49,7 @@ class AkeetForm(ErrorPopper):
             self.poperror(r.json()["detail"])
 
     def invalid(self, text):
-        """invalid: Akeetが不適か調べる。返り値は文字列。"""
+        """Akeetが不適か調べる。返り値は文字列。"""
         l = len(text)
         if "\n" in text:
             return "改行文字は使えません。"
@@ -62,7 +62,7 @@ class AkeetForm(ErrorPopper):
 
 class AkeetColumn(RecycleView):
     """
-    AkeetColumn: TLのWidget。
+    TLのWidget。
     """
     def __init__(self, **kwargs):
         super(AkeetColumn, self).__init__(**kwargs)
@@ -72,11 +72,13 @@ class AkeetColumn(RecycleView):
         executor.submit(self.daemon)
 
     def get_akeets(self):
+        """最新100件のAkeetを取得する。"""
         r = requests.get(url.AKEETS)
         data = reversed(r.json())
         return [Akeet.from_response(r).row() for r in data]
 
     def daemon(self):
+        """Akeetを取得し続ける。(config.qt==Trueの間)"""
         config.qt = False
         while not config.qt:
             sleep(1)

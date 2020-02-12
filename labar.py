@@ -8,7 +8,7 @@ from data.loginfo import getloginfo
 
 class LaView(ActionView):
     """
-    LaView: ActionBar直下に置くWidget。
+    ActionBar直下に置くWidget。
     """
     def __init__(self, **kwargs):
         super(LaView, self).__init__(**kwargs)
@@ -19,6 +19,7 @@ class LaView(ActionView):
             self.unsigned()
 
     def unsigned(self):
+        """サインイン情報がない時のActionViewを構成する"""
         for la in self.children.copy():
             if isinstance(la, LaButton):
                 self.remove_widget(la)
@@ -27,6 +28,7 @@ class LaView(ActionView):
         self.add_widget(LaButton(text="Sign up"))
 
     def signed(self):
+        """サインイン情報がある時のActionViewを構成する"""
         for la in self.children.copy():
             if isinstance(la, LaButton):
                 self.remove_widget(la)
@@ -36,7 +38,7 @@ class LaView(ActionView):
 
 class LaPrevious(ActionPrevious):
     """
-    LaPrevious: ActionView内に置く戻るボタンのWidget。
+    ActionView内に置く戻るボタンのWidget。
     """
     def __init__(self, fname, **kwargs):
         super(LaPrevious, self).__init__(**kwargs)
@@ -46,11 +48,13 @@ class LaPrevious(ActionPrevious):
         getattr(self, self.funcname)()
 
     def menu(self):
+        """menuscreenに移動する。"""
         sm = App.get_running_app().root.ids["smanager"]
         sm.transition.direction = "right"
         sm.current = "menuscreen"
 
     def gtl(self):
+        """global timelineに移動する。"""
         sm = App.get_running_app().root.ids["smanager"]
         sm.gtl()
 
@@ -65,16 +69,19 @@ class LaButton(ActionButton):
         self.on_release = getattr(self, funcname)
 
     def Sign_in(self):
+        """サインイン画面に移動する。"""
         sm = App.get_running_app().root.ids["smanager"]
         sm.transition.direction = "left"
         sm.current = "signinform"
 
     def Sign_up(self):
+        """サインアップ画面に移動する。"""
         sm = App.get_running_app().root.ids["smanager"]
         sm.transition.direction = "left"
         sm.current = "signupform"
 
     def My_Page(self):
+        """自分のユーザー画面に移動する。"""
         sm = App.get_running_app().root.ids["smanager"]
         sm.user()
 

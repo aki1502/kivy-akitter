@@ -1,6 +1,10 @@
+import base64
 from datetime import datetime
 from typing import NamedTuple
 
+import requests
+
+from variables import url
 
 
 class Akeet(NamedTuple):
@@ -24,10 +28,16 @@ class Akeet(NamedTuple):
 
     @classmethod
     def from_response(cls, response):
-        author = str(response["author"])
+        """APIから得たdictをAkeetに加工する"""
+        author = response["author"]
         text = response["text"]
         published_date = datetime.fromisoformat(response["published_date"])
+        icon = f"./cache/images/{author}.png"
+        r = requests.get(url.USERINFO, {"username": author})
+        with open(icon, "wb") as f:
+            f.write(base64.b64decode(r.json()["base64_image"]))
         return Akeet(
+            icon=icon,
             author=author,
             text=text,
             published_date=published_date,
