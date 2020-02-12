@@ -1,8 +1,11 @@
 from kivy.app import App
 from kivy.lang.builder import Builder
+import requests
 
 from modules.errorpopper import ErrorPopper
 import modules.form
+from data.loginfo import setloginfo
+from variables import url
 
 
 
@@ -10,17 +13,17 @@ class SignAbstract(ErrorPopper):
     """
     SignEP: SigninForm, SignupFormの親クラス。
     """
-    def sign(self, *args):
-        v = self.validation(*args)
-        if not v:
-            self.poperror("invalid username or password")
+    def sign(self, **kwargs):
+        err = self.validation(**kwargs)
+        if err:
+            self.poperror(err)
             return None
         sm = self.manager
         sm.gtl(direction="left")
-        lv = self.manager.parent.ids["laview"]
+        lv = App.get_running_app().root.ids["laview"]
         lv.signed()
         
-    def validation(self, *args):
+    def validation(self, **kwargs):
         raise NotImplementedError
 
 
@@ -28,17 +31,27 @@ class SigninForm(SignAbstract):
     """
     SigninForm: サインイン画面のWidget。
     """
-    def validation(self, name, password):
-        return True
-
+    def validation(self, **kwargs):
+        r = requests.post(url.SIGNIN, json=kwargs)
+        if r.status_code == 200:
+            setloginfo(username=kwargs["username"], **r.json())
+            return ""
+        else:
+            return r.json()["detail"]
 
 class SignupForm(SignAbstract):
     """
     SignupForm: サインアップ画面のWidget。
     """
-    def validation(self, name, password1, password2):
-        return True
-
+    def validation(self, **kwargs):
+        r = requests.post(url.SIGNUP, json=kwargs)
+        if r.status_code != 201:
+            if r.headers["Content-Type"] == "application/json":
+                return r.json()["detail"]
+            return str(r.status_code)
+        r = requests.post(url.SIGNIN, json=kwargs)
+        setloginfo(username=kwargs["username"], **r.json())
+        return ""
 
 inkv = r"""
 <SigninForm>:
@@ -62,7 +75,7 @@ inkv = r"""
                 size: sp(300), sp(80)
                 text: "Sign in"
                 font_size: 35
-                on_release: root.sign(username.text, password.text)
+                on_release: root.sign(username=username.text, password=password.text)
 """
 
 upkv = r"""
@@ -75,12 +88,12 @@ upkv = r"""
             label_text: "UserName"
 
         Form:
-            id: passwordone
+            id: password
             label_text: "Password"
             password: True
 
         Form:
-            id: passwordtwo
+            id: re_password
             label_text: "Password(again)"
             password: True
 
@@ -90,7 +103,7 @@ upkv = r"""
                 size: sp(300), sp(80)
                 text: "Sign up"
                 font_size: 35
-                on_release: root.sign(username.text, passwordone.text, passwordtwo.text)
+                on_release: root.sign(username=username.text, password=password.text, re_password=re_password.text)
 """
 
 Builder.load_string(inkv)

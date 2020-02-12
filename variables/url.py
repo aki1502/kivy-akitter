@@ -1,0 +1,7 @@
+DEBUG   = "http://127.0.0.1:8000/"
+BASE    = "https://www.aki1502.tk/"
+API     = DEBUG + "akitter/api/"
+AKEETS  = API + "akeets/"
+SIGNIN  = API + "auth/token/login/"
+SIGNOUT = API + "auth/token/logout/"
+SIGNUP  = API + "register/"

@@ -1,13 +1,17 @@
+from time import sleep
+from concurrent.futures import ThreadPoolExecutor
+
 from kivy.lang.builder import Builder
 from kivy.properties import StringProperty
 from kivy.uix.recycleview import RecycleView
 import requests
 
-import modules.multi_language_textinput
-
 from modules.akeet import Akeet
 from modules.errorpopper import ErrorPopper
+import modules.multi_language_textinput
 import modules.separator
+from data.loginfo import getloginfo
+from variables import config, url
 
 
 
@@ -31,9 +35,18 @@ class AkeetForm(ErrorPopper):
         error_message = self.invalid(self.ipt)
         if error_message:
             self.poperror(error_message)
-        else:
-            print(self.ipt)
+            return None
+        r = requests.post(
+            url.AKEETS,
+            json={"text": self.ipt},
+            headers={"Authorization": f"Token {getloginfo()['auth_token']}"}
+        )
+        if r.status_code == 201:
             self.ipt = ""
+        elif r.status_code == 401:
+            self.poperror("ログイン情報が見つかりません。")
+        else:
+            self.poperror(r.json()["detail"])
 
     def invalid(self, text):
         """invalid: Akeetが不適か調べる。返り値は文字列。"""
@@ -54,12 +67,22 @@ class AkeetColumn(RecycleView):
     def __init__(self, **kwargs):
         super(AkeetColumn, self).__init__(**kwargs)
         self.data = self.get_akeets()
+        executor = ThreadPoolExecutor()
+        executor.daemon = True
+        executor.submit(self.daemon)
 
     def get_akeets(self):
-        url = "https://www.aki1502.tk/akitter/api/akeets/"
-        response = requests.get(url)
-        data = reversed(response.json())
+        r = requests.get(url.AKEETS)
+        data = reversed(r.json())
         return [Akeet.from_response(r).row() for r in data]
+
+    def daemon(self):
+        config.qt = False
+        while not config.qt:
+            sleep(1)
+            self.data = self.get_akeets()
+            if not self.parent.manager: break
+
 
 
 formkv = r"""
@@ -149,10 +172,10 @@ akeetkv = r"""
             anchor_x: "left"
             anchor_y: "top"
             size_hint_x: None
-            width: root.font_size*3+sp(20)
+            width: root.height+sp(5)
 
             Image:
-                height: root.font_size*3
+                height: root.height
                 source: root.icon
 
         BoxLayout:
@@ -171,6 +194,7 @@ akeetkv = r"""
                     text_size: self.size
                     halign: "left"
                     valign: "center"
+                    padding_x: sp(5)
 
                 Label:
                     text: root.published_date
@@ -187,6 +211,7 @@ akeetkv = r"""
                 text_size: self.size
                 halign: "left"
                 valign: "top"
+                padding_x: sp(5)
 """
 
 Builder.load_string(formkv)

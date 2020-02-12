@@ -2,6 +2,8 @@ from kivy.app import App
 from kivy.lang.builder import Builder
 from kivy.uix.actionbar import ActionButton, ActionPrevious, ActionView
 
+from data.loginfo import getloginfo
+
 
 
 class LaView(ActionView):
@@ -9,10 +11,9 @@ class LaView(ActionView):
     LaView: ActionBar直下に置くWidget。
     """
     def __init__(self, **kwargs):
-        from modules.loginfo import loginfo
         super(LaView, self).__init__(**kwargs)
         self.add_widget(LaPrevious(fname="menu"))
-        if loginfo["username"]:
+        if getloginfo()["auth_token"]:
             self.signed()
         else:
             self.unsigned()

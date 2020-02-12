@@ -4,7 +4,8 @@ from kivy.uix.screenmanager import Screen, ScreenManager
 from akeetform import AkeetForm
 from signform import SigninForm, SignupForm
 from userscreen import UserScreen
-
+from data.loginfo import getloginfo
+from variables import config
 
 
 class SManager(ScreenManager):
@@ -13,8 +14,7 @@ class SManager(ScreenManager):
     """
     def __init__(self, **kwargs):
         super(SManager, self).__init__(**kwargs)
-        from modules.loginfo import loginfo
-        if loginfo["username"]:
+        if getloginfo()["auth_token"]:
             self.gtl(direction="left")
         else:
             self.unsigned()
@@ -41,11 +41,11 @@ class SManager(ScreenManager):
         self.current = "gtl"
 
     def user(self, name=None):
-        from modules.loginfo import loginfo
-        name = name or loginfo["username"]
+        name = name or getloginfo()["username"]
         if self.current_screen.name == name:
             return None
         self.clear_widgets()
+        config.qt = True
         self.add_widget(UserScreen(name=name))
         self.transition.direction = "left"
         self.current = name

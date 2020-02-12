@@ -4,7 +4,7 @@ from kivy.uix.boxlayout import BoxLayout
 
 import labar
 import smanager
-
+from variables import config
 
 
 class AkitterApp(App):
@@ -51,3 +51,4 @@ Builder.load_string(kv)
 if __name__ == "__main__":
     app = AkitterApp()
     app.run()
+    config.qt = True
