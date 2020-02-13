@@ -1,6 +1,8 @@
 import base64
 from datetime import datetime
+from functools import lru_cache
 from typing import NamedTuple
+import uuid
 
 import requests
 
@@ -32,13 +34,19 @@ class Akeet(NamedTuple):
         author = response["author"]
         text = response["text"]
         published_date = datetime.fromisoformat(response["published_date"])
-        icon = f"./cache/images/{author}.png"
-        r = requests.get(url.USERINFO, {"username": author})
-        with open(icon, "wb") as f:
-            f.write(base64.b64decode(r.json()["base64_image"]))
+        icon = cls.memoicon(author)
         return Akeet(
             icon=icon,
             author=author,
             text=text,
             published_date=published_date,
         )
+
+    @classmethod
+    @lru_cache()
+    def memoicon(cls, author):
+        icon = f"./cache/images/{author}_{uuid.uuid5(uuid.NAMESPACE_DNS, author)}.png"
+        r = requests.get(url.USERINFO, {"username": author})
+        with open(icon, "wb") as f:
+            f.write(base64.b64decode(r.json()["base64_image"]))
+        return icon

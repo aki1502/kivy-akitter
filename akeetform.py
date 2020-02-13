@@ -1,5 +1,7 @@
-from time import sleep
+from collections import deque
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
+from time import sleep
 
 from kivy.lang.builder import Builder
 from kivy.properties import StringProperty
@@ -66,24 +68,31 @@ class AkeetColumn(RecycleView):
     """
     def __init__(self, **kwargs):
         super(AkeetColumn, self).__init__(**kwargs)
+        self.end = datetime(1998, 2, 21)
         self.data = self.get_akeets()
         executor = ThreadPoolExecutor()
         executor.daemon = True
         executor.submit(self.daemon)
 
     def get_akeets(self):
-        """最新100件のAkeetを取得する。"""
-        r = requests.get(url.AKEETS)
+        """最新のAkeetを取得する。"""
+        start, self.end = self.end, datetime.now()
+        r = requests.get(
+            url.AKEETS,
+            {
+                "published_date_after": start.isoformat(sep=" "),
+                "published_date_before": self.end.isoformat(sep=" ")
+            }
+        )
         data = reversed(r.json())
-        return [Akeet.from_response(r).row() for r in data]
+        return deque((Akeet.from_response(r).row() for r in data), 100)
 
     def daemon(self):
-        """Akeetを取得し続ける。(config.qt==Trueの間)"""
+        """新規Akeetを取得し続ける。(config.qt==Falseの間)"""
         config.qt = False
         while not config.qt:
             sleep(1)
-            self.data = self.get_akeets()
-            if not self.parent.manager: break
+            self.data.extend(self.get_akeets())
 
 
 
