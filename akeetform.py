@@ -110,7 +110,6 @@ formkv = r"""
         size_hint_y: None
         height: root.height-root.textinput_height
         pos: (0, root.textinput_height)
-        padding: 0, sp(2), 0, 0
 
         RecycleBoxLayout:
             default_size: None, root.width/10 if self.width > 14*sp(37) else self.width/6
@@ -138,7 +137,6 @@ formkv = r"""
                 cursor_blink: True
                 cursor_color: 0.937, 0.506, 0.059, 0.8 # orange
                 selection_color: 0.937, 0.506, 0.059, 0.221 # orange
-                pos: (sp(2), 0)
 
             CompositionLabel:
                 id: cmp_window
@@ -154,6 +152,7 @@ formkv = r"""
             size_hint_x: None
             width: root.sendbutton_width
             on_release: root.send()
+            padding_x: sp(2)
 """
 
 akeetkv = r"""
@@ -183,7 +182,7 @@ akeetkv = r"""
             anchor_x: "left"
             anchor_y: "top"
             size_hint_x: None
-            width: root.height+sp(5)
+            width: root.height+sp(4)
 
             Image:
                 height: root.height

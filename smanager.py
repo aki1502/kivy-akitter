@@ -38,6 +38,7 @@ class SManager(ScreenManager):
         if getattr(self.current_screen, "name", "") == "gtl":
             return None
         self.clear_widgets()
+        config.un = ""
         self.add_widget(AkeetForm(name="gtl"))
         self.transition.direction = direction
         self.current = "gtl"
@@ -49,6 +50,7 @@ class SManager(ScreenManager):
             return None
         self.clear_widgets()
         config.qt = True
+        config.un = name
         self.add_widget(UserScreen(name=name))
         self.transition.direction = "left"
         self.current = name
